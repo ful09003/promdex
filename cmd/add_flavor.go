@@ -56,7 +56,7 @@ func splitMetric(in string) ([]string, error) {
 	ret = strings.Split(in, "/")
 	log.WithField("split", ret).Info("split input metric name")
 
-	if len(ret) == 0 {
+	if len(ret) == 1 {
 		return ret, errors.New("input metric name was invalid")
 	}
 
