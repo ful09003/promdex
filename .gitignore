@@ -1,0 +1,4 @@
+# Commonly generated during local development
+cmd/cmd
+cmd/promdex.sql
+**/*.yml~

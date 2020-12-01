@@ -1,14 +1,19 @@
-package internal
+//+build all_tests
 
-import "testing"
+package internal_test
+
+import (
+	"atamedomain.name/promdex/internal"
+	"testing"
+)
 
 func TestStringingStorageTypesIsLogical(t *testing.T) {
 	var table = []struct {
-		in       PromdexStorageType
+		in       internal.PromdexStorageType
 		expected string
 	}{
-		{NilStore, "null"},
-		{SQLiteStore, "sqlite"},
+		{internal.NilStore, "null"},
+		{internal.SQLiteStore, "sqlite"},
 	}
 	for _, tt := range table {
 		if tt.in.String() != tt.expected {
