@@ -1,10 +1,6 @@
-package metastorage
+package internal
 
-import (
-	"github.com/prometheus/client_golang/api/prometheus/v1"
-)
-
-// PromdexStorageType is a custom type used to enumerate possible storage backends
+// PromdexStorageType is a custom type used to enumerate possible storage backends. Used for CLI purposes.
 type PromdexStorageType int
 
 func (p PromdexStorageType) String() string {
@@ -27,17 +23,19 @@ const (
 
 //Metastorer represents behavior which allows Promdex to persist Prometheus metrics/metadata
 type Metastorer interface {
-	Store(k string, v v1.Metadata) error
-	SetMetricsVersion(v string)
+	StoreExporterMeta(e, k, v string) error
+	AddMetricFlavor(e, k string, v PromdexFlavor) error
 }
 
 //NullMetastore is a sink that does nothing.
-type NullMetastore struct {}
+type NullMetastore struct{}
 
-//Store as implemented here does nothing at all
-func (n NullMetastore) Store(k string, v v1.Metadata) (error) {
+//StoreExporterMeta as implemented here does nothing at all
+func (n NullMetastore) StoreExporterMeta(e, k, v string) error {
 	return nil
 }
 
-//SetMetricsVersion here does nothing at all
-func (n NullMetastore) SetMetricsVersion(s string) {}
+//AddMetricFlavor as implemented here does nothing at all
+func (n NullMetastore) AddMetricFlavor(e, k string, v PromdexFlavor) error {
+	return nil
+}

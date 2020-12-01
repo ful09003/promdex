@@ -1,10 +1,10 @@
-package metastorage
+package internal
 
 import "testing"
 
 func TestStringingStorageTypesIsLogical(t *testing.T) {
 	var table = []struct {
-		in PromdexStorageType
+		in       PromdexStorageType
 		expected string
 	}{
 		{NilStore, "null"},

@@ -2,7 +2,8 @@ package main
 
 import (
 	"errors"
-	"atamedomain.name/promdex/internal/metastorage"
+
+	"atamedomain.name/promdex/internal"
 	"github.com/urfave/cli/v2"
 )
 
@@ -12,10 +13,10 @@ func initStore(c *cli.Context) error {
 	}
 
 	switch c.String("store-type") {
-	case metastorage.NilStore.String():
+	case internal.NilStore.String():
 		//Do something special for NilStore
-	case metastorage.SQLiteStore.String():
-		if _, err := metastorage.NewSQLiteMetastore(c.String("store-path"), true); err != nil {
+	case internal.SQLiteStore.String():
+		if _, err := internal.NewSQLiteMetastore(c.String("store-path"), true); err != nil {
 			return err
 		}
 	}
