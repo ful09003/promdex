@@ -27,7 +27,6 @@ func runPromdexServer(c *cli.Context) error {
 
 		store = s
 	}
-	log.Info(store)
 
 	r := mux.NewRouter()
 	r.Use(logReq)
@@ -35,8 +34,9 @@ func runPromdexServer(c *cli.Context) error {
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
 		w.Write([]byte("Yooo\n"))
 	})
-	r.HandleFunc("/breakit", func(w http.ResponseWriter, r *http.Request){
-		d := store.RetrieveMetric("go_info", "prometheus")
+	r.HandleFunc("/m/{job}/{metric}", func(w http.ResponseWriter, r *http.Request){
+		v := mux.Vars(r)
+		d := store.RetrieveMetric(v["metric"], v["job"])
 		b, e := json.Marshal(d)
 		if e != nil {
 			log.WithField("original", e).Warn("failed sending promdex server response")
@@ -50,9 +50,14 @@ func runPromdexServer(c *cli.Context) error {
 
 func logReq(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+		v := mux.Vars(r)
+
 		log.WithFields(log.Fields{
 			"request_path": r.RequestURI,
 			"remote_addr": r.RemoteAddr,
+			"request_method": r.Method,
+			"job": v["job"],
+			"metric": v["metric"],
 		}).Debug("handling promdex request")
 
 		next.ServeHTTP(w, r)
