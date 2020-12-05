@@ -124,6 +124,46 @@ func (s *SQLiteMetastore) AddMetricFlavor(ex, k string, v PromdexFlavor) error {
 	return nil
 }
 
+//RetrieveMetric returns promdex-enriched metric information using information stored in a sqlite database
+func (s *SQLiteMetastore) RetrieveMetric(k, j string) PromdexEnhancedMetric {
+	if e := s.d.Ping(); e != nil {
+		log.Error(e)
+	}
+
+	var ret PromdexEnhancedMetric
+	
+	promMetricStmt, err := s.d.Prepare(`SELECT metric_name, metric_instance_job, metric_source_desc FROM promdexMetrics
+WHERE metric_name = ?
+AND metric_instance_job = ?`)
+
+	if err != nil {
+		log.Errorf("error preparing sqlite statement, original: %s", err)
+	}
+	defer promMetricStmt.Close()
+	err = promMetricStmt.QueryRow(k, j).Scan(&ret.PromMetric.Metric, &ret.Job, &ret.PromMetric.Help)
+	if err != nil {
+		log.Error(err)
+	}
+	
+	promFlavorRows, err := s.d.Query("SELECT json_extract(desc, '$.context') FROM promdexDescriptions WHERE metric_name = ? AND metric_instance_job = ?", k, j)
+	if err != nil {
+		log.Error(err)
+	}
+	defer promFlavorRows.Close()
+	for promFlavorRows.Next() {
+		var s string
+		err = promFlavorRows.Scan(&s)
+		if err != nil {
+			log.Warning(err)
+		}
+		f := NewFlavor(s)
+
+		ret.PromdexMetric = append(ret.PromdexMetric, f)
+	}
+
+	return ret
+}
+
 //TODO: TEST THIS!!! :zzzzzz:
 func initDB(s *sql.DB) error {
 	if e := s.Ping(); e != nil {

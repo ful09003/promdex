@@ -25,6 +25,7 @@ const (
 type Metastorer interface {
 	StoreExporterMeta(e, k, v string) error
 	AddMetricFlavor(e, k string, v PromdexFlavor) error
+	RetrieveMetric(k, j string) PromdexEnhancedMetric
 }
 
 //NullMetastore is a sink that does nothing.
@@ -38,4 +39,9 @@ func (n NullMetastore) StoreExporterMeta(e, k, v string) error {
 //AddMetricFlavor as implemented here does nothing at all
 func (n NullMetastore) AddMetricFlavor(e, k string, v PromdexFlavor) error {
 	return nil
+}
+
+//RetrieveMetric as implemented here does nothing at all
+func (n NullMetastore) RetrieveMetric(k, j string) PromdexEnhancedMetric {
+	return PromdexEnhancedMetric{}
 }
