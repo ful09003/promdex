@@ -11,7 +11,7 @@ import (
 )
 
 func runPromdexServer(c *cli.Context) error {
-	log.Info("Spinning up a Promdex server...")
+	log.WithField("bind-addr", c.String("bind-addr")).Info("Spinning up a Promdex server...")
 	var store internal.Metastorer
 
 	switch c.String("store-type") {

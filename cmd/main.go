@@ -78,7 +78,7 @@ func main() {
 						Name: "start",
 						Description: "Starts a Promdex server",
 						Flags: []cli.Flag{
-							&cli.StringFlag{Name: "bind-addr", Required: true, Usage: "Address to bind Promdex server to", Value: ":19918"},
+							&cli.StringFlag{Name: "bind-addr", Usage: "Address to bind Promdex server to", Value: ":19918"},
 							&cli.StringFlag{Name: "store-type", Aliases: []string{"t"}, Required: true, Usage: "Used to signify what type of storage backend will be used", Value: "null"},
 							&cli.StringFlag{Name: "store-path", Aliases: []string{"sp"}, Usage: "For path-based storage backends (e.g. sqlite), location to use for the backing store"},
 						},

@@ -25,6 +25,7 @@ To run all of Promdex's tests, stand up a Prometheus listening to localhost:9090
 ## Problems that still need solving:
 - Tests for at least all happy execution paths
 - Clean up data model; we need created/updated times for the metric as an example
+  - Also, flavor descriptions should have some sort of identifying category (info, gotcha, etc.) to truly address the spirit of why the utility exists.
 - HTTP path handling (add POST, probably DELETE)
 - Consider another builtin metastore (maybe object storage?)
 - Metadata discovery feels like it should dedupe metrics when their descriptions are the same, e.g.
