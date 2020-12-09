@@ -8,6 +8,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+
 func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 	log.SetOutput(os.Stdout)
@@ -15,6 +16,14 @@ func init() {
 }
 
 func main() {
+	var inLevel string
+
+	cli.VersionFlag = &cli.BoolFlag{
+		Name: "version",
+		Aliases: []string{"V"},
+		Usage: "Print application version information",
+	}
+
 	app := &cli.App{
 		Name:     "promdex-server",
 		Version:  "v0.0.1",
@@ -25,7 +34,22 @@ func main() {
 				Email: "mfuller@digitalocean.com",
 			},
 		},
+		UseShortOptionHandling: true,
 		Usage: "Promdex Server binary",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name: "log-level",
+				Usage: "Sets log level for use in Promdex. If not one of info, warn, error, debug will default to warn.",
+				Value: "warn",
+				DefaultText: "warn",
+				EnvVars: []string{"PROMDEX_LOG_LEVEL"},
+				Destination: &inLevel,
+			},
+		},
+		Before: func(c *cli.Context) error {
+			log.SetLevel(setLogLevel(inLevel))
+			return nil
+		},
 		Commands: []*cli.Command{
 			{
 				Name:        "storage",
@@ -92,5 +116,21 @@ func main() {
 	err := app.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func setLogLevel(s string) log.Level {
+	switch s {
+	case "info":
+		return log.InfoLevel
+	case "warn":
+		return log.WarnLevel
+	case "error":
+		return log.ErrorLevel
+	case "debug":
+		return log.DebugLevel
+	default:
+		log.Warn("defaulting to warn log level")
+		return log.WarnLevel
 	}
 }
